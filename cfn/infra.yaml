@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources: 
+  LexChatBotRole:
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ec2.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      # Policies:
+      #   - !Ref LexChatBotPolicy
+      RoleName: LexChatBotRole
+    
+  LexChatBotPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties: 
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource: "*"
+          -
+            Effect: "Allow"
+            Action: 
+             - ses:*
+            Resource: "*"
+          -
+            Effect: "Allow"
+            Action: 
+              - sns:*
+            Resource: "*"
+      Roles:
+        - !Ref LexChatBotRole
+      Description: "Managed Policy for LexChatBot"
+      Path: "/"
+      ManagedPolicyName: "LexChatBotPolicy"
+    
+  LexChatBotInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        - 
+          !Ref LexChatBotRole
+      
